@@ -1,0 +1,3 @@
+[
+	{ "keys": ["super+g"], "command": "goto_lua_definition"}
+]

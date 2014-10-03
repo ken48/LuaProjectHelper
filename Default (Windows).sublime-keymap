@@ -1,0 +1,3 @@
+[
+	{ "keys": ["alt+g"], "command": "goto_lua_definition"}
+]
