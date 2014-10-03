@@ -1,6 +1,7 @@
 # LuaProjectHelper
 
 Lua Project Helper sublime plugin includes 2 features:
+
 	* autocompletion for lua functions from every lua file in folders
 	* goto symbol definition - uses database of known functions
 
