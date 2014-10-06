@@ -44,11 +44,6 @@ class LuaProjectAutoCompletion(sublime_plugin.EventListener):
 
 	tableNameFindProg = re.compile('\w+:\w*$')
 
-	def post_window_command(window, command_name, args):
-		if command_name is None:
-			print(args)
-		print(command_name)
-
 	# Invoked when user toggles a side_bar or removes folder.
 	# Unfortunately there is no command on "add folder" event :(
 	def on_window_command(self, window, command_name, args):
