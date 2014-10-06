@@ -3,6 +3,8 @@ import sublime, sublime_plugin
 
 ####################################################################################################
 class GotoLuaDefinition(sublime_plugin.TextCommand):
+	defList = []
+
 	def run(self, edit):
 		wordRegion = self.view.word(self.view.sel()[0].end())
 		word = self.view.substr(wordRegion)
@@ -12,16 +14,28 @@ class GotoLuaDefinition(sublime_plugin.TextCommand):
 		if len(LuaProject.autoCompletionList) == 0:
 			ProjectDBGenerator.update()
 
+		self.defList = []
+		defShowList = []
+
 		for module, obj in LuaProject.projectDictionary.items():
 			for name, data in obj.items():
 				# name = func, data[0] - line, data[1] - args, data[2] - table
 				if word == name:
-					window = sublime.active_window()
-					path = LuaProject.projectFileDic[module] + ':' + str(data[0])
-					window.open_file(path, sublime.ENCODED_POSITION)
-					return
+					defShowList.append(module + ' : ' + str(data[0]))
+					self.defList.append(LuaProject.projectFileDic[module] + ':' + str(data[0]))
+					
+		window = sublime.active_window()
+		listSize = len(self.defList)
+		if listSize == 1:
+			window.open_file(self.defList[0], sublime.ENCODED_POSITION)
+		elif listSize > 0:
+			window.show_quick_panel(defShowList, self.onChoice)
+		else:
+			sublime.status_message('Unable to find definition for \'' + word + '\'')
 
-		sublime.status_message('Can\'t find definition for \'' + word + '\'')
+	def onChoice(self, value):
+		if value >= 0 and value < len(self.defList):
+			sublime.active_window().open_file(self.defList[value], sublime.ENCODED_POSITION)
 
 
 ####################################################################################################
