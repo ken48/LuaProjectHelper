@@ -111,6 +111,7 @@ class LuaProject:
 class ProjectDBGenerator:
 	funcFindProg = re.compile('function\s+(.+?)\s*\)')
 	wsProg = re.compile(r'\s+')
+	reMethodArgs = re.compile("\((.*)\)")
 
 	def update():
 		LuaProject.clear()
@@ -168,7 +169,12 @@ class ProjectDBGenerator:
 
 					if len(funcName) > 0:
 						try:
-							fileDic[funcName] = [lineCounter, '(' + funcAndArgsList[1] + ')', tableName]
+							if funcAndArgsList[1] is None or funcAndArgsList[1] == '':
+								selectedArgsList = '()'
+							else:
+								selectedArgsList = re.sub( ProjectDBGenerator.reMethodArgs , '(${1:\\1})' , '(' + funcAndArgsList[1] + ')' )
+
+							fileDic[funcName] = [lineCounter, selectedArgsList, tableName]
 						except IndexError:
 							fileDic[funcName] = [lineCounter, '', tableName]
 		return fileDic
