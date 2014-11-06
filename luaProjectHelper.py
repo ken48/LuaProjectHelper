@@ -165,13 +165,13 @@ class ProjectDBGenerator:
 
 					if len(tableFuncList) > 1:
 						tableName = tableFuncList[0]
-						fileDic[tableFuncList[0]] = [1, ':', '']
+						fileDic[tableFuncList[0]] = [1, '', '']
 						funcAndArgs = tableFuncList[1]
 					else:
 						dottedTableFunc = func.split('.', 1)
 						if len(dottedTableFunc) > 1:
 							tableName = dottedTableFunc[0]
-							fileDic[dottedTableFunc[0]] = [1, '.', '']
+							fileDic[dottedTableFunc[0]] = [1, '', '']
 							funcAndArgs = dottedTableFunc[1]
 						else:
 							funcAndArgs = tableFuncList[0]
