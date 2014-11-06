@@ -43,6 +43,7 @@ class GotoLuaDefinition(sublime_plugin.TextCommand):
 class LuaProjectAutoCompletion(sublime_plugin.EventListener):
 
 	tableNameFindProg = re.compile('\w+:\w*$')
+	tableNameFindDotProg = re.compile('\w+.\w*$')
 
 	# Invoked when user toggles a side_bar or removes folder.
 	# Unfortunately there is no command on "add folder" event :(
@@ -71,8 +72,13 @@ class LuaProjectAutoCompletion(sublime_plugin.EventListener):
 				curline = view.substr(linePos)
 				curline = curline[:view.rowcol(caretPos)[1]]
 				matchTable = self.tableNameFindProg.search(curline)
+				sep = ':'
+				if matchTable is None:
+					matchTable = self.tableNameFindDotProg.search(curline)
+					sep = '.'
+
 				if matchTable:
-					tableCompls = LuaProject.getTableCompletionList(matchTable.group().split(':', 1)[0])
+					tableCompls = LuaProject.getTableCompletionList(matchTable.group().split(sep, 1)[0])
 					if tableCompls is not None and len(tableCompls) > 0:
 						return(tableCompls, complFlags)
 				
@@ -156,12 +162,19 @@ class ProjectDBGenerator:
 				for func in funcs:
 					tableName = ''
 					tableFuncList = func.split(':', 1)
+
 					if len(tableFuncList) > 1:
 						tableName = tableFuncList[0]
 						fileDic[tableFuncList[0]] = [1, ':', '']
 						funcAndArgs = tableFuncList[1]
 					else:
-						funcAndArgs = tableFuncList[0]
+						dottedTableFunc = func.split('.', 1)
+						if len(dottedTableFunc) > 1:
+							tableName = dottedTableFunc[0]
+							fileDic[dottedTableFunc[0]] = [1, '.', '']
+							funcAndArgs = dottedTableFunc[1]
+						else:
+							funcAndArgs = tableFuncList[0]
 
 					#split func signature & argument list
 					funcAndArgsList = funcAndArgs.split('(', 1)
