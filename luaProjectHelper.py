@@ -64,6 +64,9 @@ class LuaProjectAutoCompletion(sublime_plugin.EventListener):
 		complFlags = sublime.INHIBIT_WORD_COMPLETIONS | sublime.INHIBIT_EXPLICIT_COMPLETIONS
 
 		if ProjectDBGenerator.testFileExt(curFile):
+			if not curFile or curFile == '':
+				return
+
 			if len(LuaProject.autoCompletionList) == 0:
 				ProjectDBGenerator.update()
 			else:
